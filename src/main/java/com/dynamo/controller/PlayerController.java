@@ -58,4 +58,24 @@ public class PlayerController {
 
         return entity == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(entity);
     }
+    @PutMapping("/{username}/games/{gameId}")
+    public ResponseEntity<Void> update(@PathVariable("username") String username,
+                                                    @PathVariable("gameId") String gameId,
+                                                    @RequestBody ScoreDto scoreDto) {
+
+        var entity = dynamoDbTemplate.load(Key.builder()
+                .partitionValue(username)
+                .sortValue(gameId)
+                .build(), PlayerHistory.class);
+
+        if (entity == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        entity.setScore(scoreDto.score());
+
+        dynamoDbTemplate.save(entity);
+
+        return ResponseEntity.noContent().build();
+    }
 }
