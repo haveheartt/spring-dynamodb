@@ -1,5 +1,6 @@
 package com.dynamo.entity;
 
+import com.dynamo.controller.ScoreDto;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
@@ -15,6 +16,17 @@ public class PlayerHistory {
     private UUID gameId;
     private Double score;
     private Instant createdAt;
+
+    public static PlayerHistory fromScore(String username, ScoreDto scoreDto) {
+        var entity = new PlayerHistory();
+
+        entity.setUsername(username);
+        entity.setGameId(UUID.randomUUID());
+        entity.setScore(scoreDto.score());
+        entity.setCreatedAt(Instant.now());
+
+        return entity;
+    }
 
     @DynamoDbPartitionKey
     @DynamoDbAttribute("username")
